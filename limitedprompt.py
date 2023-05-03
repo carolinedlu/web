@@ -1,12 +1,23 @@
+import logging
 import openai
 import os
 import streamlit as st
 import importlib
 import sys
+from github import Github
 from langchain.base_language import BaseLanguageModel
 
-# Set up the OpenAI API credentials
-os.environ["OPENAI_API_KEY"] = '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'
+if "OPENAI_API_KEY" not in st.secrets:
+    st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
+    sys.exit(1)
+
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+
+logging.info(f"OPENAI_API_KEY: {openai_api_key}")
+
+# Set up the GitHub API
+g = Github(st.secrets["GITHUB_TOKEN"])
+repo = g.get_repo("scooter7/limitedprompt)
 
 # Define the options for the dropdown
 program_options = ["Computer Science", "Psychology", "Biology", "Marketing"]
