@@ -59,6 +59,7 @@ def app():
         n=1,
         stop=None,
         temperature=0.5,
+        messages=[]
     )
 
     output_text = response.choices[0].text
@@ -79,6 +80,7 @@ def app():
             n=1,
             stop=None,
             temperature=0.5,
+            messages=[]
         )
 
         output_text = response.choices[0].text
