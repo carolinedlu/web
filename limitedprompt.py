@@ -52,7 +52,7 @@ def app():
 
     # Use the OpenAI API to generate a response to the initial prompt
     max_tokens = 1024
-    response = openai.Completion.create(
+    response = openai.ChatCompletion.create(
         engine="gpt-3.5-turbo",
         prompt=prompt,
         max_tokens=max_tokens,
@@ -72,7 +72,7 @@ def app():
     # Use the user's follow-up question as the prompt for the OpenAI API
     if followup_question:
         prompt = f"{followup_question}"
-        response = openai.Completion.create(
+        response = oopenai.ChatCompletion.create(
             engine="gpt-3.5-turbo",
             prompt=prompt,
             max_tokens=max_tokens,
