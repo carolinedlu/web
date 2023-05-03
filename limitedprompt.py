@@ -5,7 +5,7 @@ import streamlit as st
 import importlib
 import sys
 from github import Github
-from langchain.base_language import BaseLanguageModel
+from langchain.schema import BaseLanguageModel
 
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
