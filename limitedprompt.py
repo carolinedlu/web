@@ -120,4 +120,3 @@ else:
 
     # Clear the input field after sending a message
     form.empty()
-
