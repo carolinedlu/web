@@ -102,21 +102,24 @@ else:
         input_text = form.text_input("Enter your message:")
         form_submit_button = form.form_submit_button(label="Send")
 
-        if form_submit_button and input_text:
-            # Set the filename key every time the form is submitted
-            filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
-            st.session_state.filename = filename
+        if form_submit_button:
+    first_name = form.text_input("Enter your first name:", key="first_name")
+    email = form.text_input("Enter your email address:", key="email")
 
-            response = chatbot(input_text, first_name, email)
+    input_text = form.text_input("Enter your message:")
+    
+    if input_text:
+        # Set the filename key every time the form is submitted
+        filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
+        st.session_state.filename = filename
+
+        response = chatbot(input_text, first_name, email)
 
         # Write the user message and chatbot response to the chat container
         with chat_container:
             st.write(f"{first_name}: {input_text}")
             st.write(f"Chatbot: {response}")
 
-        # Save the first name and email in session state
-        st.session_state.first_name = first_name
-        st.session_state.email = email
-
     # Clear the input field after sending a message
     form.empty()
+
