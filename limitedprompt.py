@@ -51,11 +51,9 @@ def get_first_prompt():
         st.session_state.dropdowns_selected = True
 
     # Check if all dropdowns are selected before moving to the name, email, and text input view
-    if st.session_state.dropdowns_selected:
+    if "dropdowns_selected" in st.session_state and st.session_state.dropdowns_selected:
         # Add a delay to give time for the page to update
         st.experimental_set_query_params(submit_clicked=True)
-
-    return first_prompt
 
 def chatbot(input_text, first_name, email):
     index = GPTSimpleVectorIndex.load_from_disk('index.json')
