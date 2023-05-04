@@ -51,12 +51,12 @@ def chatbot(input_text, first_name, email):
     if "first_prompt_sent" not in st.session_state:
         st.session_state.first_prompt_sent = False
 
-if not st.session_state.first_prompt_sent:
+    if not st.session_state.first_prompt_sent:
         st.session_state.first_prompt_sent = True
         dropdown_selections = display_dropdown_fields()
         input_text = get_first_prompt(dropdown_selections)
         st.text_input("Enter your first name:", key="first_name")
-       
+
 # Set up the initial dropdown fields
 institution_type = st.selectbox("Select institution type:", ["Community College", "Public College/University", "Private College/University", "Other"])
 degree_level = st.selectbox("Select degree level:", ["Certificate", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral degree", "Other"])
@@ -111,3 +111,4 @@ if st.session_state.first_prompt_sent:
 
     # Clear the input field after sending a message
     form.empty()
+
