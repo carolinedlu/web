@@ -33,85 +33,78 @@ def construct_index():
 
     return index
 
-def get_first_prompt():
+def display_dropdown_fields():
     institution_type = st.selectbox("Select institution type:", ["Community College", "Public College/University", "Private College/University", "Other"])
     degree_level = st.selectbox("Select degree level:", ["Certificate", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral degree", "Other"])
     program_type = st.selectbox("Select program type:", ["Undergraduate", "Graduate", "Certificate", "Other"])
     region = st.selectbox("Select region:", ["Northeast", "Midwest", "South", "West"])
 
-    first_prompt = f"I am interested in learning about the following types of colleges: {institution_type}, {degree_level}, {program_type}, and {region} region of the US."
-    return first_prompt
+    return institution_type, degree_level, program_type, region
+
+def get_first_prompt(dropdown_selections):
+    institution_type, degree_level, program_type, region = dropdown_selections
+    return f"Please provide a list of colleges that meet {institution_type}, {degree_level}, {program_type}, and {region} region of the US."
 
 def chatbot(input_text, first_name, email):
     index = GPTSimpleVectorIndex.load_from_disk('index.json')
-    response = index.query(input_text, response_mode="compact")
 
-    # Create the content directory if it doesn't already exist
-    content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
+    if not st.session_state.first_prompt_sent:
+        st.session_state.first_prompt_sent = True
+        dropdown_selections = display_dropdown_fields()
+        input_text = get_first_prompt(dropdown_selections)
+        st.text_input("Enter your first name:", key="first_name")
+       
+# Set up the initial dropdown fields
+institution_type = st.selectbox("Select institution type:", ["Community College", "Public College/University", "Private College/University", "Other"])
+degree_level = st.selectbox("Select degree level:", ["Certificate", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral degree", "Other"])
+program_type = st.selectbox("Select program type:", ["Undergraduate", "Graduate", "Certificate", "Other"])
+region = st.selectbox("Select region:", ["Northeast", "Midwest", "South", "West"])
 
-    os.makedirs(content_dir, exist_ok=True)
+if "dropdowns_filled" not in st.session_state:
+    st.session_state.dropdowns_filled = False
 
-    # Write the user question and chatbot response to a file in the content directory
-    filename = st.session_state.filename
-    file_path = os.path.join(content_dir, filename)
-    with open(file_path, 'a') as f:
-        f.write(f"{first_name} ({email}): {input_text}\n")
-        f.write(f"Chatbot response: {response.response}\n")
-        
-    # Write the chat file to GitHub
-    with open(file_path, 'rb') as f:
-        contents = f.read()
-        repo.create_file(f"content/{filename}", f"Add chat file {filename}", contents)
+# Check if all dropdown fields are filled
+if institution_type and degree_level and program_type and region:
+    st.session_state.dropdowns_filled = True
 
-    return response.response
-
-index = construct_index()
-
-st.set_page_config(page_title="Carnegie Chatbot")
-
-# Initialize first_prompt_sent to False in session state
-if "first_prompt_sent" not in st.session_state:
-    st.session_state.first_prompt_sent = False
-
-# Create a container to hold the chat messages
-chat_container = st.container()
-
-# Initialize last_send_pressed to False in session state
-if "last_send_pressed" not in st.session_state:
-    st.session_state.last_send_pressed = False
-
-# Create a form to enter a message and submit it
-form = st.form(key="my_form", clear_on_submit=True)
-if "first_send" not in st.session_state:
-    st.session_state.first_send = True
-
-if st.session_state.first_send:
-    first_name = form.text_input("Enter your first name:", key="first_name")
-    email = form.text_input("Enter your email address:", key="email")
-    st.session_state.first_send = False
-else:
-    first_name = st.session_state.first_name
-    email = st.session_state.email
-
-input_text = form.text_input("Enter your message:")
-form_submit_button = form.form_submit_button(label="Send")
-
-if form_submit_button and input_text:
-    # Set the filename key every time the form is submitted
-    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
-    st.session_state.filename = filename
-    
-    response = chatbot(input_text, first_name, email)
-
-    # Write the user message and chatbot response to the chat container
+# If all dropdown fields are filled, send the initial prompt
+if st.session_state.dropdowns_filled and not st.session_state.first_prompt_sent:
+    first_prompt = get_first_prompt()
     with chat_container:
-        st.write(f"{first_name}: {input_text}")
-        st.write(f"Chatbot: {response}")
+        st.write(f"Chatbot: Please provide a list of colleges that meet {institution_type}, {degree_level}, {program_type}, and {region} region of the US.")
+    st.session_state.first_prompt_sent = True
 
-    # Save the first name and email in session state
-    st.session_state.first_name = first_name
-    st.session_state.email = email
+# Display the name, email, and input fields after the initial prompt is sent
+if st.session_state.first_prompt_sent:
+    if "first_send" not in st.session_state:
+        st.session_state.first_send = True
 
-# Clear the input field after sending a message
-form.empty()
+    if st.session_state.first_send:
+        first_name = form.text_input("Enter your first name:", key="first_name")
+        email = form.text_input("Enter your email address:", key="email")
+        st.session_state.first_send = False
+    else:
+        first_name = st.session_state.first_name
+        email = st.session_state.email
 
+    input_text = form.text_input("Enter your message:")
+    form_submit_button = form.form_submit_button(label="Send")
+
+    if form_submit_button and input_text:
+        # Set the filename key every time the form is submitted
+        filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
+        st.session_state.filename = filename
+
+        response = chatbot(input_text, first_name, email)
+
+        # Write the user message and chatbot response to the chat container
+        with chat_container:
+            st.write(f"{first_name}: {input_text}")
+            st.write(f"Chatbot: {response}")
+
+        # Save the first name and email in session state
+        st.session_state.first_name = first_name
+        st.session_state.email = email
+
+    # Clear the input field after sending a message
+    form.empty()
