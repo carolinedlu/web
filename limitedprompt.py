@@ -49,7 +49,7 @@ def chatbot(input_text, first_name, email):
     index = GPTSimpleVectorIndex.load_from_disk('index.json')
 
     if "first_prompt_sent" not in st.session_state:
-    st.session_state.first_prompt_sent = False
+        st.session_state.first_prompt_sent = False
 
 if not st.session_state.first_prompt_sent:
         st.session_state.first_prompt_sent = True
