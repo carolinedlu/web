@@ -109,6 +109,5 @@ def chatbot(input_text, first_name, email):
             st.session_state.first_name = first_name
             st.session_state.email = email
 
-
     # Clear the input field after sending a message
     form.empty()
