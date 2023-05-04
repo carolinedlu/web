@@ -64,6 +64,9 @@ def chatbot(input_text, first_name, email):
     os.makedirs(content_dir, exist_ok=True)
 
     # Write the user question and chatbot response to a file in the content directory
+    with open(os.path.join(content_dir, f"{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"), "w") as f:
+        f.write(f"{first_name}: {input_text}\n\n")
+        f.write(f"Chatbot: {response}\n\n")
 
     with chat_container:
         st.write(f"{first_name}: {input_text}")
