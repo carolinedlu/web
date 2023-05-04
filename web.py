@@ -118,8 +118,15 @@ def construct_index(urls):
 
     return index
 
-def extract_text_from_url(url):
-    # code to extract text from the webpage using requests and beautifulsoup libraries
+    # get the webpage content using requests
+    r = requests.get(url)
+    
+    # parse the webpage content using BeautifulSoup
+    soup = BeautifulSoup(r.content, 'html.parser')
+    
+    # extract the text from the webpage
+    text = soup.get_text()
+    
     return text
 
 index = construct_index(docs_urls)
