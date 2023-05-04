@@ -17,7 +17,7 @@ logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 
 # Set up the GitHub API
 g = Github(st.secrets["GITHUB_TOKEN"])
-repo = g.get_repo("scooter7/CXBot")
+repo = g.get_repo("scooter7/limitedprompt")
 
 def construct_index():
     max_input_size = 4096
@@ -40,6 +40,18 @@ def get_first_prompt():
     region = st.selectbox("Select region:", ["Northeast", "Midwest", "South", "West"])
 
     first_prompt = f"I am interested in learning about the following types of colleges: {institution_type}, {degree_level}, {program_type}, and {region} region of the US."
+
+    # Add submit button for dropdowns
+    if st.button("Submit"):
+        # Save the selected values in session state
+        st.session_state.institution_type = institution_type
+        st.session_state.degree_level = degree_level
+        st.session_state.program_type = program_type
+        st.session_state.region = region
+
+        # Set the flag to True
+        st.session_state.dropdowns_selected = True
+
     return first_prompt
 
 def chatbot(input_text, first_name, email):
