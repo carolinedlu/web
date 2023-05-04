@@ -26,9 +26,7 @@ repo = g.get_repo("scooter7/web")
 def get_documents_from_urls(urls):
     documents = []
     for url in urls:
-        response = requests.get(url)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        text = soup.get_text().strip()
+        text = extract_text_from_url(url)
         documents.append(text)
     return documents
 
@@ -75,6 +73,14 @@ def chatbot(input_text, first_name, email):
         repo.create_file(f"content/{filename}", f"Add chat file {filename}", contents)
 
     return response.response
+
+
+def extract_text_from_url(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    text = soup.get_text().strip()
+    return text
+    
 
 # URLs of the documents to be used for indexing
 docs_urls = [
