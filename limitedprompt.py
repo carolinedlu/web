@@ -48,7 +48,10 @@ def get_first_prompt(dropdown_selections):
 def chatbot(input_text, first_name, email):
     index = GPTSimpleVectorIndex.load_from_disk('index.json')
 
-    if not st.session_state.first_prompt_sent:
+    if "first_prompt_sent" not in st.session_state:
+    st.session_state.first_prompt_sent = False
+
+if not st.session_state.first_prompt_sent:
         st.session_state.first_prompt_sent = True
         dropdown_selections = display_dropdown_fields()
         input_text = get_first_prompt(dropdown_selections)
