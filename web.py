@@ -76,7 +76,6 @@ def chatbot(input_text, first_name, email):
 
     return response.response
 
-
 # URLs of the documents to be used for indexing
 docs_urls = [
     "https://newmanu.edu/about-newman",
@@ -162,4 +161,3 @@ if form_submit_button and input_text:
 
 # Clear the input field after sending a message
 form.empty()
-
