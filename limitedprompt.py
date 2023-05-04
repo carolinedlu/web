@@ -39,10 +39,8 @@ def get_first_prompt():
     program_type = st.selectbox("Select program type:", ["Undergraduate", "Graduate", "Certificate", "Other"])
     region = st.selectbox("Select region:", ["Northeast", "Midwest", "South", "West"])
 
-    first_prompt = f"I am interested in learning about the following types of colleges: {institution_type}, {degree_level}, {program_type}, and {region} region of the US."
-
     # Add submit button for dropdowns
-    if st.button("Submit"):
+    if st.button("Select all dropdowns"):
         # Save the selected values in session state
         st.session_state.institution_type = institution_type
         st.session_state.degree_level = degree_level
@@ -51,6 +49,11 @@ def get_first_prompt():
 
         # Set the flag to True
         st.session_state.dropdowns_selected = True
+
+    # Check if all dropdowns are selected before moving to the name, email, and text input view
+    if st.session_state.dropdowns_selected:
+        # Add a delay to give time for the page to update
+        st.experimental_set_query_params(submit_clicked=True)
 
     return first_prompt
 
@@ -94,26 +97,19 @@ if not st.session_state.first_prompt_sent:
     get_first_prompt()
     st.session_state.first_prompt_sent = True
 else:
-    if "first_send" not in st.session_state:
-        st.session_state.first_send = True
-
-    if st.session_state.first_send:
+    if "submit_clicked" in st.experimental_get_query_params():
         first_name = form.text_input("Enter your first name:", key="first_name")
         email = form.text_input("Enter your email address:", key="email")
-        st.session_state.first_send = False
-    else:
-        first_name = st.session_state.first_name
-        email = st.session_state.email
+        
+        input_text = form.text_input("Enter your message:")
+        form_submit_button = form.form_submit_button(label="Send")
 
-    input_text = form.text_input("Enter your message:")
-    form_submit_button = form.form_submit_button(label="Send")
+        if form_submit_button and input_text:
+            # Set the filename key every time the form is submitted
+            filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
+            st.session_state.filename = filename
 
-    if form_submit_button and input_text:
-        # Set the filename key every time the form is submitted
-        filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
-        st.session_state.filename = filename
-
-        response = chatbot(input_text, first_name, email)
+            response = chatbot(input_text, first_name, email)
 
         # Write the user message and chatbot response to the chat container
         with chat_container:
