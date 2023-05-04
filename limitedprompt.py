@@ -63,9 +63,9 @@ def chatbot(input_text, first_name, email):
     os.makedirs(content_dir, exist_ok=True)
 
     # Write the user question and chatbot response to a file in the content directory
-        with chat_container:
-            st.write(f"{first_name}: {input_text}")
-            st.write(f"Chatbot: {response}")
+    with chat_container:
+    st.write(f"{first_name}: {input_text}")
+    st.write(f"Chatbot: {response}")
 
         # Save the first name and email in session state
         st.session_state.first_name = first_name
