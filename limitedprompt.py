@@ -17,7 +17,7 @@ logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 
 # Set up the GitHub API
 g = Github(st.secrets["GITHUB_TOKEN"])
-repo = g.get_repo("scooter7/limitedprompt")
+repo = g.get_repo("scooter7/CXBot")
 
 def construct_index():
     max_input_size = 4096
@@ -48,7 +48,6 @@ def chatbot(input_text, first_name, email):
 
     # Create the content directory if it doesn't already exist
     content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
-
     os.makedirs(content_dir, exist_ok=True)
 
     # Write the user question and chatbot response to a file in the content directory
@@ -75,10 +74,6 @@ if "first_prompt_sent" not in st.session_state:
 
 # Create a container to hold the chat messages
 chat_container = st.container()
-
-# Initialize last_send_pressed to False in session state
-if "last_send_pressed" not in st.session_state:
-    st.session_state.last_send_pressed = False
 
 # Create a form to enter a message and submit it
 form = st.form(key="my_form", clear_on_submit=True)
