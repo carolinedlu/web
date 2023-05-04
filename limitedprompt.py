@@ -56,28 +56,13 @@ def chatbot(input_text, first_name, email):
         dropdown_selections = display_dropdown_fields()
         input_text = get_first_prompt(dropdown_selections)
         st.text_input("Enter your first name:", key="first_name")
-
+        
 # Set up the initial dropdown fields
 institution_type = st.selectbox("Select institution type:", ["Community College", "Public College/University", "Private College/University", "Other"])
 degree_level = st.selectbox("Select degree level:", ["Certificate", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral degree", "Other"])
 program_type = st.selectbox("Select program type:", ["Undergraduate", "Graduate", "Certificate", "Other"])
 region = st.selectbox("Select region:", ["Northeast", "Midwest", "South", "West"])
 
-if "dropdowns_filled" not in st.session_state:
-    st.session_state.dropdowns_filled = False
-
-# Check if all dropdown fields are filled
-if institution_type and degree_level and program_type and region:
-    st.session_state.dropdowns_filled = True
-
-# If all dropdown fields are filled, send the initial prompt
-if st.session_state.dropdowns_filled and not st.session_state.first_prompt_sent:
-    first_prompt = get_first_prompt()
-    with chat_container:
-        st.write(f"Chatbot: Please provide a list of colleges that meet {institution_type}, {degree_level}, {program_type}, and {region} region of the US.")
-    st.session_state.first_prompt_sent = True
-
-# Display the name, email, and input fields after the initial prompt is sent
 if st.session_state.first_prompt_sent:
     if "first_send" not in st.session_state:
         st.session_state.first_send = True
@@ -108,7 +93,4 @@ if st.session_state.first_prompt_sent:
         # Save the first name and email in session state
         st.session_state.first_name = first_name
         st.session_state.email = email
-
-    # Clear the input field after sending a message
-    form.empty()
-
+        form.empty()
