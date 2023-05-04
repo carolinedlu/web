@@ -63,10 +63,6 @@ def chatbot(input_text, first_name, email):
     content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
     os.makedirs(content_dir, exist_ok=True)
 
-    # Create the content directory if it doesn't already exist
-    content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
-    os.makedirs(content_dir, exist_ok=True)
-
     # Write the user question and chatbot response to a file in the content directory
     filename = st.session_state.filename
     file_path = os.path.join(content_dir, filename)
