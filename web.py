@@ -81,7 +81,7 @@ def extract_text_from_url(url):
     text = soup.get_text().strip()
     return text
     
-
+    
 # URLs of the documents to be used for indexing
 docs_urls = [
     "https://newmanu.edu/about-newman",
