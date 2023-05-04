@@ -17,7 +17,7 @@ logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 
 # Set up the GitHub API
 g = Github(st.secrets["GITHUB_TOKEN"])
-repo = g.get_repo("scooter7/limitedprompt")
+repo = g.get_repo("scooter7/CXBot")
 
 def construct_index():
     max_input_size = 4096
