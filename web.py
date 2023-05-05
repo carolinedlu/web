@@ -74,8 +74,7 @@ def chatbot(input_text, first_name, email):
         index = construct_index(urls)
     
     prompt = f"{first_name} ({email}): {input_text}"
-
-   response = index.query(prompt, response_mode="compact")
+    response = index.query(prompt, response_mode="compact")
 
     # Create the content directory if it doesn't already exist
     content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
