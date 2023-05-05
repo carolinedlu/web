@@ -7,7 +7,7 @@ from langchain.chains.conversation.memory import ConversationBufferMemory
 BeautifulSoupWebReader = download_loader("BeautifulSoupWebReader")
 
 loader = BeautifulSoupWebReader()
-documents = loader.load_data(urls=['https://google.com'])
+documents = loader.load_data(urls=['https://shmooze.io])
 index = GPTSimpleVectorIndex(documents)
 
 tools = [
