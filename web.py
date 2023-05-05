@@ -82,8 +82,9 @@ def chatbot(input_text, first_name, email):
 def extract_text_from_url(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
-    text = soup.get_text().
+    text = soup.get_text().strip()
     return text
+    
     
 # URLs of the documents to be used for indexing
 docs_urls = [
