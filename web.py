@@ -74,7 +74,7 @@ def chatbot(input_text, first_name, email):
 
 
 docs_directory_path = "docs"
-index = construct_index(docs_directory_path)
+index = GPTSimpleVectorIndex.load_from_disk('index.json')
 
 st.set_page_config(page_title="Carnegie Chatbot")
 
