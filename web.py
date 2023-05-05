@@ -110,6 +110,10 @@ docs_urls = [
     "https://newmanu.edu/campus-life/student-activities/campus-clubs"
 ]
 
+
+docs_directory_path = "docs"
+index = construct_index(docs_directory_path)
+
 st.set_page_config(page_title="Carnegie Chatbot")
 
 # Create a container to hold the chat messages
