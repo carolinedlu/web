@@ -25,12 +25,7 @@ repo = g.get_repo("scooter7/web")
 # Initialize first_send to True in session state
 if "first_send" not in st.session_state:
     st.session_state.first_send = True
-
-
-def extract_text_from_url(url):
-    # TODO: Define this function to extract the text from a webpage given its URL
-    return ""
-
+    
 
 def get_documents_from_urls(urls):
     documents = []
@@ -52,8 +47,8 @@ def construct_index(urls):
     documents = []
     for url in urls:
         # extract text from the webpage
-        text = extract_text_from_url(url)
-        documents.append((url, text))
+        url_text = extract_text_from_url(url)
+        documents.append((url, url_text))
 
     index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
@@ -126,6 +121,8 @@ if "last_send_pressed" not in st.session_state:
 
 # Create a form to enter a message and submit it
 form = st.form(key="my_form", clear_on_submit=True)
+if "first_send" not in st.session_state:
+    st.session_state.first_send = True
 
 if st.session_state.first_send:
     first_name = form.text_input("Enter your first name:", key="first_name")
@@ -135,15 +132,12 @@ else:
     first_name = st.session_state.first_name
     email = st.session_state.email
 
-if "first_name" not in st.session_state:
-    st.session_state["first_name"] = ""
-
 input_text = form.text_input("Enter your message:")
 form_submit_button = form.form_submit_button(label="Send")
 
 if form_submit_button and input_text:
     # Set the filename key every time the form is submitted
-    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt")
+    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.docx")
     st.session_state.filename = filename
     
     response = chatbot(input_text, first_name, email)
