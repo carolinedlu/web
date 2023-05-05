@@ -99,7 +99,6 @@ docs_urls = [
     "https://newmanu.edu/campus-life/student-activities/campus-clubs"
 ]
 
-
 st.set_page_config(page_title="Carnegie Chatbot")
 
 # Create a container to hold the chat messages
