@@ -1,3 +1,4 @@
+import llama_index
 from llama_index import GPTSimpleVectorIndex, download_loader
 from langchain.agents import initialize_agent, Tool
 from langchain.llms import OpenAI
