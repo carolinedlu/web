@@ -111,8 +111,6 @@ if "last_send_pressed" not in st.session_state:
 
 # Create a form to enter a message and submit it
 form = st.form(key="my_form", clear_on_submit=True)
-if "first_send" not in st.session_state:
-    st.session_state.first_send = True
 
 if st.session_state.first_send:
     first_name = form.text_input("Enter your first name:", key="first_name")
@@ -121,6 +119,9 @@ if st.session_state.first_send:
 else:
     first_name = st.session_state.first_name
     email = st.session_state.email
+
+if "first_name" not in st.session_state:
+    st.session_state["first_name"] = ""
 
 input_text = form.text_input("Enter your message:")
 form_submit_button = form.form_submit_button(label="Send")
