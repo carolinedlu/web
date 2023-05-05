@@ -59,7 +59,14 @@ def construct_index(urls):
 
 
 def chatbot(input_text, first_name, email):
-    index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    # Attempt to load the index from disk
+    try:
+        index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    except Exception as e:
+        # If loading fails, recreate the index
+        logging.warning(f"Failed to load index from disk: {e}")
+        index = construct_index(docs_urls)
+    
     prompt = f"{first_name} ({email}): {input_text}"
     response = index.query(prompt, response_mode="compact")
 
@@ -74,14 +81,13 @@ def chatbot(input_text, first_name, email):
     with open(file_path, 'a') as f:
         f.write(f"{first_name} ({email}): {input_text}\n")
         f.write(f"Chatbot response: {response.response}\n")
-        
+
     # Write the chat file to GitHub
     with open(file_path, 'rb') as f:
         contents = f.read()
         repo.create_file(f"content/{filename}", f"Add chat file {filename}", contents)
 
     return response.response
-
 
 def extract_text_from_url(url):
     response = requests.get(url)
