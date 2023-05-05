@@ -1,11 +1,12 @@
 import logging
 import streamlit as st
-from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+import requests
+from bs4 import BeautifulSoup
+from gpt_index import GPTSimpleVectorIndex, LLMPredictor, PromptHelper
 from langchain.chat_models import ChatOpenAI
 import sys
 from datetime import datetime
 import os
-import requests
 from github import Github
 
 if "OPENAI_API_KEY" not in st.secrets:
