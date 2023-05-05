@@ -41,7 +41,11 @@ def construct_index(urls):
 
     llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
 
-    documents = get_documents_from_urls(urls)
+    documents = []
+    for url in urls:
+        # extract text from the webpage
+        text = extract_text_from_url(url)
+        documents.append((url, text))
 
     index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
@@ -94,41 +98,6 @@ docs_urls = [
     "https://newmanu.edu/scholarships",
     "https://newmanu.edu/campus-life/student-activities/campus-clubs"
 ]
-
-def construct_index(urls):
-    max_input_size = 4096
-    num_outputs = 512
-    max_chunk_overlap = 20
-    chunk_size_limit = 600
-
-    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
-
-    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
-
-    documents = []
-    for url in urls:
-        # extract text from the webpage
-        text = extract_text_from_url(url)
-        documents.append((url, text))
-
-    index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-
-    index.save_to_disk('index.json')
-
-    return index
-
-    # get the webpage content using requests
-    r = requests.get(url)
-    
-    # parse the webpage content using BeautifulSoup
-    soup = BeautifulSoup(r.content, 'html.parser')
-    
-    # extract the text from the webpage
-    text = soup.get_text()
-    
-    return text
-
-index = construct_index(docs_urls)
 
 st.set_page_config(page_title="Carnegie Chatbot")
 
