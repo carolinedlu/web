@@ -1,88 +1,75 @@
 import logging
-import os
-import requests
 import streamlit as st
+import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-from github import Github
 from gpt_index import GPTSimpleVectorIndex, LLMPredictor, PromptHelper
 from langchain.chat_models import ChatOpenAI
+from datetime import datetime
+import os
+from github import Github
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-
-# Set up Streamlit secrets
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
-    sys.exit(1)
+    st.stop()
+
+if "GITHUB_TOKEN" not in st.secrets:
+    st.error("Please set the GITHUB_TOKEN secret on the Streamlit dashboard.")
+    st.stop()
+
 openai_api_key = st.secrets["OPENAI_API_KEY"]
+
 logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 
 # Set up the GitHub API
 g = Github(st.secrets["GITHUB_TOKEN"])
 repo = g.get_repo("scooter7/web")
 
-# Define function to extract text from URL and save as text file
-def extract_text_from_url(url, output_dir):
-    logging.info(f"Extracting text from URL: {url}")
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
-    text = soup.get_text()
-    filename = f"{os.path.join(output_dir, datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))}.txt"
-    with open(filename, "w") as f:
-        f.write(text)
-    return filename
-
-# Create folder for text files
+# Create docs directory
 if not os.path.exists("docs"):
     os.makedirs("docs")
 
-# Extract text from 10 URLs and save as text files in docs folder
-urls = [
-    "https://en.wikipedia.org/wiki/Python_(programming_language)",
-    "https://en.wikipedia.org/wiki/JavaScript",
-    "https://en.wikipedia.org/wiki/Java_(programming_language)",
-    "https://en.wikipedia.org/wiki/C%2B%2B",
-    "https://en.wikipedia.org/wiki/Python_(film)",
-    "https://en.wikipedia.org/wiki/JavaScript_(film)",
-    "https://en.wikipedia.org/wiki/Java_(1995_film)",
-    "https://en.wikipedia.org/wiki/C%2B%2B_(film)",
-    "https://en.wikipedia.org/wiki/Python_(Monty)_Pictures",
-    "https://en.wikipedia.org/wiki/JavaScript_Monthly"
-]
-for url in urls:
-    extract_text_from_url(url, "docs")
+# Scrape text from URLs
+urls = ["https://en.wikipedia.org/wiki/Python_(programming_language)", 
+        "https://www.python.org/", 
+        "https://docs.python.org/3/tutorial/index.html",
+        "https://www.tutorialspoint.com/python/index.htm",
+        "https://realpython.com/",
+        "https://www.geeksforgeeks.org/python-programming-language/",
+        "https://www.codecademy.com/learn/learn-python",
+        "https://www.w3schools.com/python/",
+        "https://www.datacamp.com/courses/intro-to-python-for-data-science",
+        "https://www.learnpython.org/"]
 
-# Create GPT chatbot
-logging.info("Creating GPT chatbot")
-index = GPTSimpleVectorIndex("docs", vector_len=512)
-predictor = LLMPredictor(index)
-chatbot = ChatOpenAI(prompt_helper=PromptHelper(predictor))
-
-# Define function to save chat history
-def save_chat_history(chat_history, output_dir):
-    filename = f"{os.path.join(output_dir, datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))}.txt"
+for i, url in enumerate(urls):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    text = soup.get_text()
+    filename = f"docs/{i}.txt"
     with open(filename, "w") as f:
-        f.write(chat_history)
-    return filename
+        f.write(text)
 
-# Create folder for chat history
-if not os.path.exists("content"):
-    os.makedirs("content")
+# Set up chatbot
+index = GPTSimpleVectorIndex.load("models/gpt_index/")
+predictor = LLMPredictor.from_index(index)
+helper = PromptHelper()
+chatbot = ChatOpenAI(predictor=predictor, helper=helper, openai_api_key=openai_api_key)
 
-# Start chat with GPT chatbot
-logging.info("Starting chat with GPT chatbot")
-form = st.form(key="chat")
-message = form.text_input(label="You")
-chat_history = ""
-while True:
-    if message:
-        response = chatbot.message(message)
-        chat_history += f"You: {message}\nBot: {response}\n\n"
-        message = form.text_input(label="You", value="")
-    else:
-        break
-form.empty()
+# Chat with user and save chat history
+with st.form(key="chat_form"):
+    st.header("Chat with the bot")
+    user_input = st.text_input("You", "")
+    if st.form_submit_button("Send"):
+        response = chatbot.get_response(user_input)
+        st.text_area("Bot", response)
+        now = datetime.now()
+        timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
+        filename = f"content/{timestamp}.txt"
+        with open(filename, "w") as f:
+            f.write(f"You: {user_input}\nBot: {response}")
 
-# Save chat history
-logging.info("Saving chat history")
+# End of app
+st.info("Thanks for chatting!")
+st.balloons()
+st.stop()
+st.experimental_rerun()
+st.write("To start a new chat, refresh the page.")
