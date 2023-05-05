@@ -39,7 +39,6 @@ def get_documents_from_urls(urls):
         documents.append(text)
     return documents
 
-
 def construct_index(urls):
     max_input_size = 4096
     num_outputs = 512
