@@ -27,6 +27,11 @@ if "first_send" not in st.session_state:
     st.session_state.first_send = True
 
 
+def extract_text_from_url(url):
+    # TODO: Define this function to extract the text from a webpage given its URL
+    return ""
+
+
 def get_documents_from_urls(urls):
     documents = []
     for url in urls:
@@ -65,10 +70,12 @@ def chatbot(input_text, first_name, email):
     except Exception as e:
         # If loading fails, recreate the index
         logging.warning(f"Failed to load index from disk: {e}")
-        index = construct_index(docs_urls)
+        urls = []  # TODO: Define a list of URLs to use for constructing the index
+        index = construct_index(urls)
     
     prompt = f"{first_name} ({email}): {input_text}"
-    response = index.query(prompt, response_mode="compact")
+
+   response = index.query(prompt, response_mode="compact")
 
     # Create the content directory if it doesn't already exist
     content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
