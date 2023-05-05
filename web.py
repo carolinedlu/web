@@ -22,6 +22,10 @@ logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 g = Github(st.secrets["GITHUB_TOKEN"])
 repo = g.get_repo("scooter7/web")
 
+# Initialize first_send to True in session state
+if "first_send" not in st.session_state:
+    st.session_state.first_send = True
+
 
 def get_documents_from_urls(urls):
     documents = []
