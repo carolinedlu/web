@@ -37,8 +37,9 @@ def construct_index(urls):
     # Ensure that the documents variable is a list of strings
     documents = [doc for doc in documents if isinstance(doc, str)]
 
-    llm_predictor = LLMPredictor(api_key=openai_api_key)
-    prompt_helper = PromptHelper(ChatOpenAI, api_key=openai_api_key)
+    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
+
+    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
 
     index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
