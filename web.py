@@ -37,6 +37,10 @@ def construct_index(urls):
     # Ensure that the documents variable is a list of strings
     documents = [doc for doc in documents if isinstance(doc, str)]
 
+    max_input_size = 2048 # Define max_input_size here
+    num_outputs = 1
+    max_chunk_overlap = 32
+    chunk_size_limit = 512
     prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
 
     llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
@@ -119,4 +123,3 @@ if form_submit_button and input_text:
 
 # Clear the input field after sending a message
 form.empty()
-
