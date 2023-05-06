@@ -22,14 +22,7 @@ g = Github(st.secrets["GITHUB_TOKEN"])
 repo = g.get_repo("scooter7/web")
 
 def construct_index(urls):
-    max_input_size = 4096
-    num_outputs = 512
-    max_chunk_overlap = 20
-    chunk_size_limit = 600
-
-    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
-
-    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
+    # ... other code ...
 
     documents = []
     for url in urls:
@@ -40,6 +33,9 @@ def construct_index(urls):
             documents.append(text)
         except:
             logging.error(f"Failed to fetch {url}")
+
+    # Ensure that the documents variable is a list of strings
+    documents = [doc for doc in documents if isinstance(doc, str)]
 
     index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
