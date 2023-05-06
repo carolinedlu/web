@@ -45,6 +45,9 @@ def construct_index(urls):
 
     llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
 
+    # Filter out non-string elements from documents
+    documents = [doc for doc in documents if isinstance(doc, str)]
+
     index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
     index.save_to_disk('index.json')
