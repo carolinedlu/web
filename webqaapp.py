@@ -1,3 +1,4 @@
+import logging
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
 import sys
