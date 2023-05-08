@@ -59,9 +59,6 @@ for page in pages:
     docs.extend(splits)
     metadatas.extend([{"source": page['source']}] * len(splits))
 
-with open("faiss_store.pkl", "rb") as f:
-    store = pickle.load(f)
-
 chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
 
