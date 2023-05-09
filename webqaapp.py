@@ -57,9 +57,7 @@ for page in pages:
     splits = text_splitter.split_text(page['text'])
     docs.extend(splits)
     metadatas.extend([{"source": page['source']}] * len(splits))
-    chain = VectorDBQAWithSourcesChain.from_llm(
-            llm=OpenAI(temperature=0), vectorstore=store)
-
+  
 st.title(" ")
 
 def chatbot(input_text):
