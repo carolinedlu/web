@@ -14,6 +14,7 @@ from langchain.chains import VectorDBQAWithSourcesChain
 import pickle
 from datetime import datetime
 from github import Github
+import numpy as np
 
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
@@ -64,6 +65,13 @@ with open("faiss_store.pkl", "rb") as f:
 
 chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
+
+# assume that `index` is an instance of `IndexFlat`
+k = 10
+embedding = np.random.rand(1, 128).astype(np.float32)
+distances = np.empty((1, k), dtype=np.float32)
+labels = np.empty((1, k), dtype=np.int64)
+index.search(embedding, k, distances, labels)
 
 st.title(" ")
 
