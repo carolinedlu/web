@@ -61,7 +61,6 @@ for page in pages:
 st.title(" ")
 
 def chatbot(input_text):
-def chatbot(input_text):
     prompt = input_text.strip()
     # Remove parentheses from input_text
     if prompt.startswith("(") and prompt.endswith(")"):
