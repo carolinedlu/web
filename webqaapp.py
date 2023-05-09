@@ -67,13 +67,7 @@ def chatbot(input_text):
         prompt = prompt[1:-1]
     response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=100, n=1, stop=None, temperature=0.5)
 
-
 # Write the user question and chatbot response to a file in the content directory
-content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
-
-os.makedirs(content_dir, exist_ok=True)
-
-    # Write the user question and chatbot response to a file in the content directory
     filename = st.session_state.filename
     file_path = os.path.join(content_dir, filename)
     with open(file_path, 'a') as f:
@@ -125,5 +119,3 @@ if form_submit_button and input_text:
 
 # Clear the input field after sending a message
 form.empty()
-
-
