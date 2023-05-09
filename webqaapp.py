@@ -114,21 +114,6 @@ if form_submit_button and input_text:
     # Write the user message and chatbot response to the chat history
     append_to_chat_history(input_text, response)
 
-    # Write the user message and chatbot response to a file in the content directory
-    content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
-    os.makedirs(content_dir, exist_ok=True)
-    file_path = os.path.join(content_dir, filename)
-    with open(file_path, 'a') as f:
-        f.write(f"{input_text}\n")  
-        if response:
-            f.write(f"Chatbot response: {response}\n")
-
-    # Write the user message and chatbot response to the chat container
-    with chat_container:
-        st.write(f"{input_text}")
-        if response:
-            st.write(f"Chatbot: {response}")
-
 # Clear the input field after sending a message
 form.empty()
 
