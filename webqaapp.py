@@ -69,9 +69,9 @@ chain = VectorDBQAWithSourcesChain.from_llm(
 # assume that `index` is an instance of `IndexFlat`
 k = 10
 embedding = np.random.rand(1, 128).astype(np.float32)
-distances = np.empty((1, k), dtype=np.float32)
-labels = np.empty((1, k), dtype=np.int64)
-store.index.search(embedding, k, out=distances, labels=labels)
+distances = numpy.empty((k,), dtype=numpy.float32)
+labels = numpy.empty((k,), dtype=numpy.int32)
+store.index.search(embedding, k, distances, labels=labels)
 
 st.title(" ")
 
