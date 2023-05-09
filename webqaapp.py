@@ -135,12 +135,12 @@ if "last_send_pressed" not in st.session_state:
     st.session_state.last_send_pressed = False
 
 # Create a form to enter a message and submit it
-form = st.form(key="my_form2", clear_on_submit=True)
+form2 = st.form(key="my_form_2", clear_on_submit=True)
 if "first_send" not in st.session_state:
     st.session_state.first_send = True
 
-input_text = form.text_input("Enter your message:")
-form_submit_button = form.form_submit_button(label="Send")
+input_text = form2.text_input("Enter your message:")
+form_submit_button = form2.form_submit_button(label="Send")
 
 if form_submit_button and input_text:
     # Set the filename key every time the form is submitted
