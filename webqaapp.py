@@ -12,6 +12,7 @@ from langchain import OpenAI
 from langchain.chains import VectorDBQAWithSourcesChain
 from datetime import datetime
 from github import Github
+import pickle
 
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
@@ -56,6 +57,9 @@ for page in pages:
     splits = text_splitter.split_text(page['text'])
     docs.extend(splits)
     metadatas.extend([{"source": page['source']}] * len(splits))
+
+with open("faiss_store.pkl", "rb") as f:
+    store = pickle.load(f)
 
 chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
