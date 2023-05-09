@@ -61,7 +61,7 @@ for page in pages:
 with open("faiss_store.pkl", "rb") as f:
     store = pickle.load(f)
 
-chain = VectorDBQAWithSourcesChain.from_llm(
+from langchain.chains import RetrievalQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
 
 st.title(" ")
