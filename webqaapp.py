@@ -65,6 +65,7 @@ def chatbot(input_text):
     # Remove parentheses from input_text
     if prompt.startswith("(") and prompt.endswith(")"):
         prompt = prompt[1:-1]
+    
     response = OpenAI.complete(prompt, engine="davinci", max_tokens=100, n=1, stop=None, temperature=0.5)
 
     if response.choices and response.choices[0].text:
