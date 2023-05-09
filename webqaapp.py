@@ -59,7 +59,6 @@ for page in pages:
     docs.extend(splits)
     metadatas.extend([{"source": page['source']}] * len(splits))
 
-
 chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
 
