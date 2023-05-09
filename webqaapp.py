@@ -71,7 +71,7 @@ k = 10
 embedding = np.random.rand(1, 128).astype(np.float32)
 distances = np.empty((1, k), dtype=np.float32)
 labels = np.empty((1, k), dtype=np.int64)
-store.index.search(embedding, k, distances, labels)
+store.index.search(embedding, k, distances, labels=labels)
 
 st.title(" ")
 
