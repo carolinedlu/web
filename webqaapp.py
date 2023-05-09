@@ -66,13 +66,6 @@ with open("faiss_store.pkl", "rb") as f:
 chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
 
-# assume that `index` is an instance of `IndexFlat`
-k = 10
-embedding = np.random.rand(1, 128).astype(np.float32)
-distances = numpy.empty((k,), dtype=numpy.float32)
-labels = numpy.empty((k,), dtype=numpy.int32)
-store.index.search(embedding, k, distances, labels=labels)
-
 st.title(" ")
 
 def chatbot(input_text):
