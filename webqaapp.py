@@ -1,18 +1,14 @@
 import logging
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
-import sys
-import os
 import requests
 from bs4 import BeautifulSoup
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-import faiss
-from langchain import OpenAI
-from langchain.chains import VectorDBQAWithSourcesChain
+from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from langchain.chat_models import ChatOpenAI
+import sys
 from datetime import datetime
+import os
 from github import Github
-import pickle
+
 
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("Please set the OPENAI_API_KEY secret on the Streamlit dashboard.")
@@ -26,65 +22,70 @@ logging.info(f"OPENAI_API_KEY: {openai_api_key}")
 g = Github(st.secrets["GITHUB_TOKEN"])
 repo = g.get_repo("scooter7/web")
 
-# Initialize chat history list
-chat_history = []
 
-def append_to_chat_history(question, answer):
-    chat_history.append({'user': question, 'bot': answer})
-
-def extract_text_from(url):
-    html = requests.get(url).text
-    soup = BeautifulSoup(html, features="html.parser")
-    text = soup.get_text()
-
-    lines = (line.strip() for line in text.splitlines())
-    return '\n'.join(line for line in lines if line)
-
-urls = [
-    "https://www.carnegiehighered.com/solutions/",
-    "https://www.carnegiehighered.com/services/",
-    "https://www.carnegiehighered.com/about/"
-]
-
-pages = []
-for url in urls:
-    pages.append({'text': extract_text_from(url), 'source': url})
+def fetch_urls(url_list):
+    """Fetches the HTML content of each URL in url_list and returns a list of tuples
+    containing the URL and its text content."""
+    result = []
+    for url in url_list:
+        try:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.content, "html.parser")
+            text = soup.get_text()
+            result.append((url, text))
+        except:
+            logging.error(f"Failed to fetch content from {url}")
+    return result
 
 
-text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
-docs, metadatas = [], []
-for page in pages:
-    splits = text_splitter.split_text(page['text'])
-    docs.extend(splits)
-    metadatas.extend([{"source": page['source']}] * len(splits))
+def construct_index(url_list):
+    max_input_size = 4096
+    num_outputs = 512
+    max_chunk_overlap = 20
+    chunk_size_limit = 600
 
-with open("faiss_store.pkl", "rb") as f:
-    store = pickle.load(f)
+    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
 
-from langchain.chains import RetrievalQAWithSourcesChain
+    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
 
-chain = RetrievalQAWithSourcesChain.from_llm(
-    llm=OpenAI(temperature=0),
-    vectorstore=store
-)
+    documents = fetch_urls(url_list)
 
-st.title(" ")
+    index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 
-def chatbot(input_text):
-    prompt = input_text.strip()
-    # Remove parentheses from input_text
-    if prompt.startswith("(") and prompt.endswith(")"):
-        prompt = prompt[1:-1]
-    response = chain(prompt)
+    index.save_to_disk('index.json')
+
+    return index
+
+
+def chatbot(input_text, first_name, email):
+    index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    prompt = f"{first_name} ({email}): {input_text}"
+    response = index.query(prompt, response_mode="compact")
 
     # Create the content directory if it doesn't already exist
     content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
+
     os.makedirs(content_dir, exist_ok=True)
-    
-    if 'answer' in response:
-        return response['answer']
-    else:
-        return ''
+
+    # Write the user question and chatbot response to a file in the content directory
+    filename = st.session_state.filename
+    file_path = os.path.join(content_dir, filename)
+    with open(file_path, 'a') as f:
+        f.write(f"{first_name} ({email}): {input_text}\n")
+        f.write(f"Chatbot response: {response.response}\n")
+        
+    # Write the chat file to GitHub
+    with open(file_path, 'rb') as f:
+        contents = f.read()
+        repo.create_file(f"content/{filename}", f"Add chat file {filename}", contents)
+
+    return response.response
+
+
+url_list = ["https://www.carnegiehighered.com/", "https://www.carnegiehighered.com/solutions/"]
+index = construct_index(url_list)
+
+st.set_page_config(page_title="Carnegie Chatbot")
 
 # Create a container to hold the chat messages
 chat_container = st.container()
