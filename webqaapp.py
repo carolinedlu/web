@@ -58,7 +58,7 @@ for page in pages:
     metadatas.extend([{"source": page['source']}] * len(splits))
 
 chain = VectorDBQAWithSourcesChain.from_llm(
-            llm=OpenAI(temperature=0), vectorstore=None)
+            llm=OpenAI(temperature=0), vectorstore=store)
 
 st.title(" ")
 
