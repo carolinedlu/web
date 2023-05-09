@@ -122,3 +122,48 @@ if form_submit_button and input_text:
 
 # Clear the input field after sending a message
 form.empty()
+
+# Create a container to hold the chat messages
+chat_container = st.container()
+
+# Initialize last_send_pressed to False in session state
+if "last_send_pressed" not in st.session_state:
+    st.session_state.last_send_pressed = False
+
+# Create a form to enter a message and submit it
+form = st.form(key="my_form", clear_on_submit=True)
+if "first_send" not in st.session_state:
+    st.session_state.first_send = True
+
+input_text = form.text_input("Enter your message:")
+form_submit_button = form.form_submit_button(label="Send")
+
+if form_submit_button and input_text:
+    # Set the filename key every time the form is submitted
+    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt")
+    st.session_state.filename = filename
+    response = chatbot(input_text)
+
+    # Remove parentheses from input_text
+    input_text = input_text.replace("(", "").replace(")", "")
+
+    # Write the user message and chatbot response to the chat history
+    append_to_chat_history(input_text, response)
+
+    # Write the user message and chatbot response to a file in the content directory
+    content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
+    os.makedirs(content_dir, exist_ok=True)
+    file_path = os.path.join(content_dir, filename)
+    with open(file_path, 'a') as f:
+        f.write(f"{input_text}\n")  
+        if response:
+            f.write(f"Chatbot response: {response}\n")
+
+    # Write the user message and chatbot response to the chat container
+    with chat_container:
+        st.write(f"{input_text}")
+        if response:
+            st.write(f"Chatbot: {response}")
+
+# Clear the input field after sending a message
+form.empty()
