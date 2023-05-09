@@ -65,7 +65,7 @@ def chatbot(input_text):
     # Remove parentheses from input_text
     if prompt.startswith("(") and prompt.endswith(")"):
         prompt = prompt[1:-1]
-    response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=100, n=1, stop=None, temperature=0.5)
+    response = openai.Completion.create(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
 
 # Write the user question and chatbot response to a file in the content directory
     filename = st.session_state.filename
