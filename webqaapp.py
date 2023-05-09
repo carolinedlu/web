@@ -135,7 +135,7 @@ if "last_send_pressed" not in st.session_state:
     st.session_state.last_send_pressed = False
 
 # Create a form to enter a message and submit it
-form = st.form(key="my_form", clear_on_submit=True)
+form = st.form(key="my_form2", clear_on_submit=True)
 if "first_send" not in st.session_state:
     st.session_state.first_send = True
 
