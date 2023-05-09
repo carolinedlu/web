@@ -34,7 +34,7 @@ docx2txt==0.8
 duckduckgo-search==2.8.6
 entrypoints==0.4
 exceptiongroup==1.1.1
-faiss-cpu==1.7.4
+faiss-cpu==1.7.3
 fastapi==0.95.0
 ffmpy==0.3.0
 filelock==3.11.0
