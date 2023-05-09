@@ -8,10 +8,8 @@ from bs4 import BeautifulSoup
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
-import faiss
 from langchain import OpenAI
 from langchain.chains import VectorDBQAWithSourcesChain
-import pickle
 from datetime import datetime
 from github import Github
 import numpy as np
@@ -59,11 +57,7 @@ for page in pages:
     splits = text_splitter.split_text(page['text'])
     docs.extend(splits)
     metadatas.extend([{"source": page['source']}] * len(splits))
-
-with open("faiss_store.pkl", "rb") as f:
-    store = pickle.load(f)
-
-chain = VectorDBQAWithSourcesChain.from_llm(
+    chain = VectorDBQAWithSourcesChain.from_llm(
             llm=OpenAI(temperature=0), vectorstore=store)
 
 st.title(" ")
