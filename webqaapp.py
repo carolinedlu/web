@@ -61,16 +61,18 @@ for page in pages:
 st.title(" ")
 
 def chatbot(input_text):
+def chatbot(input_text):
     prompt = input_text.strip()
     # Remove parentheses from input_text
     if prompt.startswith("(") and prompt.endswith(")"):
         prompt = prompt[1:-1]
-    response = chain(prompt)
+    response = OpenAI.complete(prompt, engine="davinci", max_tokens=100, n=1, stop=None, temperature=0.5)
 
-    # Create the content directory if it doesn't already exist
-    content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
+    if response.choices and response.choices[0].text:
+        # Write the user question and chatbot response to a file in the content directory
+        content_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
 
-    os.makedirs(content_dir, exist_ok=True)
+        os.makedirs(content_dir, exist_ok=True)
 
     # Write the user question and chatbot response to a file in the content directory
     filename = st.session_state.filename
