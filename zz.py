@@ -1,6 +1,7 @@
 import logging
 import streamlit as st
 from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import ChatOpenAI
 import sys
 from datetime import datetime
